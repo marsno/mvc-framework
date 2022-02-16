@@ -7,13 +7,13 @@ import mvc.beans.di.Value;
 import mvc.beans.support.BasicBeanDefinitionStrategy;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ApplicationContext implements BeanFactory {
 
-  /** no param constructor */
   public ApplicationContext() {
     super();
   }
@@ -29,10 +29,10 @@ public class ApplicationContext implements BeanFactory {
     this.initSingletonObjects();
   }
 
-  /** parent context */
+  // parent context
   protected ApplicationContext parentContext = null;
 
-  /** 用于获取所有类的 class 对象 */
+  // 用于获取所有类的 class 对象
   protected Scanner scanner = new Scanner();
 
   /**
@@ -81,7 +81,7 @@ public class ApplicationContext implements BeanFactory {
     else {
       try {
         BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanId);
-        Object object = beanDefinition.getBeanClass().newInstance();
+        Object object = beanDefinition.getBeanClass().getDeclaredConstructor().newInstance();
         for (Map.Entry<Field,Object> entry : beanDefinition.getFieldMap().entrySet()) {
           Field field = entry.getKey();
           field.setAccessible(true);
@@ -95,7 +95,7 @@ public class ApplicationContext implements BeanFactory {
         }
         return object;
       }
-      catch (InstantiationException | IllegalAccessException e) {
+      catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
         e.printStackTrace();
       }
     }
@@ -127,11 +127,11 @@ public class ApplicationContext implements BeanFactory {
       if (entry.getValue().getScope() == BeanScope.SINGLETON) {
         try {
           Object singleBean = null;
-          singleBean = entry.getValue().getBeanClass().newInstance();
+          singleBean = entry.getValue().getBeanClass().getDeclaredConstructor().newInstance();
           this.singletonObjects.put( entry.getValue().getId(), singleBean );
           rawSingletonBeans.put( entry.getValue().getId(), singleBean );
         }
-        catch (InstantiationException | IllegalAccessException e) {
+        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
           e.printStackTrace();
         }
       }
@@ -213,7 +213,7 @@ public class ApplicationContext implements BeanFactory {
     BeanDefinition beanDefinition = this.beanDefinitionMap.getOrDefault(id,null);
     if (beanDefinition == null) return;
     try {
-      Object singletonObject = beanDefinition.getBeanClass().newInstance();
+      Object singletonObject = beanDefinition.getBeanClass().getDeclaredConstructor().newInstance();
       this.singletonObjects.put( id, singletonObject );
       for (Map.Entry<Field,Object> entry : beanDefinition.getFieldMap().entrySet()) {
         Field field = entry.getKey();
@@ -230,7 +230,7 @@ public class ApplicationContext implements BeanFactory {
         }
       }
     }
-    catch (InstantiationException | IllegalAccessException e) {
+    catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       e.printStackTrace();
     }
   }

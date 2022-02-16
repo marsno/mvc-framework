@@ -1,8 +1,11 @@
 # idea
 /.idea
 
-# spring mvc source
-/org
+# maven temporary
+/target
 
 # test
 /src/main/webapp
+
+# spring mvc source
+/org
