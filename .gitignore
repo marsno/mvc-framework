@@ -1,0 +1,8 @@
+# idea
+/.idea
+
+# spring mvc source
+/org
+
+# test
+/src/main/webapp
