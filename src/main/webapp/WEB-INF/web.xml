@@ -7,7 +7,7 @@
          metadata-complete="true">
 
   <listener>
-    <listener-class>mvc.web.servlet.ContextLoaderListener</listener-class>
+    <listener-class>mvc.web.servlet.context.ContextLoaderListener</listener-class>
   </listener>
 
   <servlet>

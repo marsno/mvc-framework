@@ -4,6 +4,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import mvc.beans.ApplicationContext;
+import mvc.beans.support.BasicBeanDefinitionStrategy;
 
 /**
  * 实现了 ServletContextListener 接口, 用于在 ServletContext 被创建时,
@@ -16,8 +17,9 @@ public class ContextLoaderListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-    // 使用默认 BeanDefinitionStrategy
-    ApplicationContext context = new ApplicationContext("");
+    ApplicationContext context = new ApplicationContext(
+      new BasicBeanDefinitionStrategy() );
+    context.init("");
 
     // 将 ioc 容器添加到 ServletContext 中
     ServletContext servletContext = servletContextEvent.getServletContext();

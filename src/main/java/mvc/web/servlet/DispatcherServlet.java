@@ -9,6 +9,7 @@ import mvc.beans.ApplicationContext;
 import mvc.beans.BeanDefinition;
 import mvc.beans.config.BeanScope;
 import mvc.web.servlet.config.RequestMapping;
+import mvc.web.servlet.context.ServletBeanDefinitionStrategy;
 import mvc.web.servlet.context.WebApplicationContext;
 import mvc.web.servlet.handler.HandlerMethod;
 import mvc.web.servlet.handler.support.NormalMethodArgumentResolver;
@@ -27,30 +28,18 @@ import java.util.Map;
 // spring mvc 唯一的 HttpServlet, 也是整个框架最顶层的类
 public class DispatcherServlet extends HttpServlet {
 
-  // HttpServlet 被创建时初始化的扩展点
-  @Override
-  public void init() throws ServletException {
-    this.initContext();
-    this.initHandlerMappingList(this.context);
-    this.initHandlerAdapter(this.context);
-    this.initViewResolver(this.context);
-  }
-
-  // 接受 request 后, 调用的方法
-  @Override
-  protected void service(HttpServletRequest request, HttpServletResponse response) {
-    this.doDispatch(request, response);
-  }
-
   // spring mvc 的内部 beans
   private List<Class<?>> internalBeans = new ArrayList<Class<?>>();
 
   // servlet context
   private WebApplicationContext context = null;
 
-  // HandlerMapping list
-  private List<HandlerMapping> handlerMappingList
-      = new ArrayList<HandlerMapping>();
+  /**
+   * handler mapping list 里面有:
+   * - RequestMappingHandlerMapping
+   * - SimpleUrlHandlerMapping
+   */
+  private List<HandlerMapping> handlerMappingList  = new ArrayList<>();
 
   // 处理 HandlerMethod, 生成 ModelAndView
   private RequestMappingHandlerAdapter handlerAdapter = null;
@@ -65,14 +54,17 @@ public class DispatcherServlet extends HttpServlet {
    */
   private void initContext() {
 
-    // 初始化 spring mvc ioc 容器, 添加内部 beans
-    this.context = new WebApplicationContext("");
     this.internalBeans.add(RequestMappingHandlerMapping.class);
     this.internalBeans.add(RequestMappingHandlerAdapter.class);
     this.internalBeans.add(InternalResourceViewResolver.class);
     this.internalBeans.add(NormalMethodArgumentResolver.class);
     this.internalBeans.add(RequestParamMethodArgumentResolver.class);
     this.internalBeans.add(PathVariableMethodArgumentResolver.class);
+
+    // 初始化 spring mvc ioc 容器, 添加内部 beans
+    this.context = new WebApplicationContext( new ServletBeanDefinitionStrategy() );
+    this.context.init("");
+
     for (Class<?> type : this.internalBeans) {
       String beanId = type.getSimpleName().toLowerCase().charAt(0)
           + type.getSimpleName().substring(1);
@@ -84,33 +76,37 @@ public class DispatcherServlet extends HttpServlet {
         (ApplicationContext) this.getServletContext().getAttribute("context");
     if (context == null) return;
     this.context.setParentContext(parentContext);
+
   }
 
   // init this.handlerMapping
-  private void initHandlerMappingList(WebApplicationContext context) {
+  private void initHandlerMapping(WebApplicationContext context) {
 
     RequestMappingHandlerMapping handlerMapping =
-        (RequestMappingHandlerMapping) context.getBean("requestMappingHandlerMapping");
+      (RequestMappingHandlerMapping) context.getBean("requestMappingHandlerMapping");
 
-    this.initializingRequestMappingHandlerMapping(handlerMapping, context);
+    this.initRequestMappingHandlerMapping(handlerMapping, context);
+
     this.handlerMappingList.add(handlerMapping);
 
   }
 
   // init this.handlerAdapter
   private void initHandlerAdapter(WebApplicationContext context) {
+
     this.handlerAdapter = (RequestMappingHandlerAdapter) context.getBean("requestMappingHandlerAdapter");
 
     PathVariableMethodArgumentResolver pathVariableMethodArgumentResolver
-        = (PathVariableMethodArgumentResolver) context.getBean("pathVariableMethodArgumentResolver");
+      = (PathVariableMethodArgumentResolver) context.getBean("pathVariableMethodArgumentResolver");
     NormalMethodArgumentResolver normalMethodArgumentResolver
-        = (NormalMethodArgumentResolver) context.getBean("normalMethodArgumentResolver");
+      = (NormalMethodArgumentResolver) context.getBean("normalMethodArgumentResolver");
     RequestParamMethodArgumentResolver requestParamMethodArgumentResolver
-        = (RequestParamMethodArgumentResolver) context.getBean("requestParamMethodArgumentResolver");
+      = (RequestParamMethodArgumentResolver) context.getBean("requestParamMethodArgumentResolver");
 
     this.handlerAdapter.registerArgumentResolver(pathVariableMethodArgumentResolver);
     this.handlerAdapter.registerArgumentResolver(normalMethodArgumentResolver);
     this.handlerAdapter.registerArgumentResolver(requestParamMethodArgumentResolver);
+
   }
 
   // init this.viewResolverList
@@ -124,17 +120,22 @@ public class DispatcherServlet extends HttpServlet {
                            HttpServletResponse response ) {
 
     // 根据 request, 获取 HandlerExecutionChain
-    HandlerExecutionChain chain = null;
+    HandlerExecutionChain handlerExecutionChain = null;
+
     for (HandlerMapping handlerMapping : this.handlerMappingList) {
-      chain = handlerMapping.getHandler(request);
-      if (chain != null) break;
+      handlerExecutionChain = handlerMapping.getHandler(request);
+      if (handlerExecutionChain != null) break;
     }
-    if (chain == null) {
+
+    if (handlerExecutionChain == null) {
       response.setStatus(404);
       return;
     }
 
-    ModelAndView modelAndView = this.handlerAdapter.handle( request, response, chain.getHandler() );
+    ModelAndView modelAndView = this.handlerAdapter.handle(
+      request, response, handlerExecutionChain.getHandler()
+    );
+
     if (modelAndView.getViewName() == null) {
       try {
         response.getWriter().write( (String) modelAndView.getModelMap().get("string") );
@@ -172,16 +173,22 @@ public class DispatcherServlet extends HttpServlet {
 
   }
 
-  private void initializingRequestMappingHandlerMapping( RequestMappingHandlerMapping handlerMapping,
-                                                         WebApplicationContext context ) {
+  /**
+   * @param handlerMapping 需要初始化的 handler mapping
+   * @param context ioc 容器
+   * @return 初始化成功返回 {@code true}, 失败返回 {@code false}
+   */
+  private boolean initRequestMappingHandlerMapping( RequestMappingHandlerMapping handlerMapping,
+                                                    WebApplicationContext context ) {
+
     // 获取所有 controller 的 BeanDefinition
     List<BeanDefinition> bds = context.getControllers();
-    if (bds == null) return;
+    if (bds == null) return false;
 
     // 根据 controller 的 BeanDefinition 初始化 handlerMapping
     for (BeanDefinition bd : bds) {
       for ( Method method : bd.getBeanClass().getDeclaredMethods() ) {
-        if ( ! method.isAnnotationPresent(RequestMapping.class) )
+        if ( !method.isAnnotationPresent(RequestMapping.class) )
           continue;
         String URI = "";
         if ( bd.getBeanClass().isAnnotationPresent(RequestMapping.class) )
@@ -196,6 +203,23 @@ public class DispatcherServlet extends HttpServlet {
       }
     }
 
+    return true;
+
+  }
+
+  // HttpServlet 被创建时初始化的扩展点
+  @Override
+  public void init() throws ServletException {
+    this.initContext();
+    this.initHandlerMapping(this.context);
+    this.initHandlerAdapter(this.context);
+    this.initViewResolver(this.context);
+  }
+
+  // 接受 request 后, 调用的方法
+  @Override
+  protected void service(HttpServletRequest request, HttpServletResponse response) {
+    this.doDispatch(request, response);
   }
 
 }

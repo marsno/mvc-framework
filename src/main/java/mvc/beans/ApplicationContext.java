@@ -4,7 +4,6 @@ import mvc.beans.config.BeanScope;
 import mvc.beans.config.BeanId;
 import mvc.beans.di.Autowired;
 import mvc.beans.di.Value;
-import mvc.beans.support.BasicBeanDefinitionStrategy;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,21 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ApplicationContext implements BeanFactory {
-
-  public ApplicationContext() {
-    super();
-  }
-
-  /**
-   * 初始化容器时, 指定扫描的包
-   * @param packageName 指定扫描的包名, 若为 <code>""</code>, 扫描所有包.
-   */
-  public ApplicationContext(String packageName) {
-    super();
-    this.beanDefinitionStrategy = new BasicBeanDefinitionStrategy();
-    this.initBeanDefinitionMap(packageName);
-    this.initSingletonObjects();
-  }
 
   // parent context
   protected ApplicationContext parentContext = null;
@@ -203,6 +187,7 @@ public class ApplicationContext implements BeanFactory {
     }
 
     return true;
+
   }
 
   /**
@@ -233,6 +218,27 @@ public class ApplicationContext implements BeanFactory {
     catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * 初始化容器时, 指定扫描的包
+   * @param packageName 包名, 形如 "mvc.beans", 若为 <code>""</code>, 扫描所有包.
+   */
+  public void init(String packageName) {
+    this.initBeanDefinitionMap(packageName);
+    this.initSingletonObjects();
+  }
+
+  public ApplicationContext() {
+    super();
+  }
+
+  /**
+   * @param beanDefinitionStrategy 指定一个 strategy
+   */
+  public ApplicationContext(BeanDefinitionStrategy beanDefinitionStrategy) {
+    super();
+    this.beanDefinitionStrategy = beanDefinitionStrategy;
   }
 
 }
