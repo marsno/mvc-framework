@@ -24,22 +24,22 @@ public class WebApplicationContext extends ApplicationContext {
    *         或者 <code>null</code>, 如果没有 controller.
    */
   public List<BeanDefinition> getControllers() {
-    List<BeanDefinition> controllerBeanDefinition = new ArrayList<>();
+
+    List<BeanDefinition> controllerBeanDefinitionList = new ArrayList<>();
     for ( Map.Entry<String,BeanDefinition> entry : this.beanDefinitionMap.entrySet() ) {
       if ( !entry.getValue().getBeanClass().isAnnotationPresent(Controller.class) )
         continue;
-      controllerBeanDefinition.add( entry.getValue() );
+      controllerBeanDefinitionList.add( entry.getValue() );
     }
-    if (controllerBeanDefinition.size() == 0)
-      return null;
-    return controllerBeanDefinition;
-  }
 
-  public WebApplicationContext() {
-    super();
+    if (controllerBeanDefinitionList.size() == 0) return null;
+
+    return controllerBeanDefinitionList;
+
   }
 
   /**
+   * 创建 WebApplicationContext 并制定一个 strategy 用于定义 bean definition
    * @param beanDefinitionStrategy 指定一个 strategy
    */
   public WebApplicationContext(BeanDefinitionStrategy beanDefinitionStrategy) {

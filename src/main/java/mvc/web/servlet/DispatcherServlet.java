@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import mvc.beans.ApplicationContext;
 import mvc.beans.BeanDefinition;
 import mvc.beans.config.BeanScope;
+import mvc.web.multipart.MultipartResolver;
+import mvc.web.multipart.support.StandardServletMultipartResolver;
 import mvc.web.servlet.config.RequestMapping;
 import mvc.web.servlet.context.ServletBeanDefinitionStrategy;
 import mvc.web.servlet.context.WebApplicationContext;
@@ -25,13 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// spring mvc 唯一的 HttpServlet, 也是整个框架最顶层的类
+/** spring mvc 唯一的 HttpServlet, 也是整个框架最顶层的类 */
 public class DispatcherServlet extends HttpServlet {
 
-  // spring mvc 的内部 beans
+  /** spring mvc 的内部 beans */
   private List<Class<?>> internalBeans = new ArrayList<Class<?>>();
 
-  // servlet context
+  /** servlet context */
   private WebApplicationContext context = null;
 
   /**
@@ -41,11 +43,13 @@ public class DispatcherServlet extends HttpServlet {
    */
   private List<HandlerMapping> handlerMappingList  = new ArrayList<>();
 
-  // 处理 HandlerMethod, 生成 ModelAndView
+  /** 处理 HandlerMethod, 生成 ModelAndView */
   private RequestMappingHandlerAdapter handlerAdapter = null;
 
-  // view resolver list
+  /** view resolver list */
   private ViewResolver viewResolver = null;
+
+  private MultipartResolver multipartResolver = null;
 
   /**
    * 初始化 ioc 容器
@@ -60,27 +64,29 @@ public class DispatcherServlet extends HttpServlet {
     this.internalBeans.add(NormalMethodArgumentResolver.class);
     this.internalBeans.add(RequestParamMethodArgumentResolver.class);
     this.internalBeans.add(PathVariableMethodArgumentResolver.class);
+    this.internalBeans.add(StandardServletMultipartResolver.class);
 
-    // 初始化 spring mvc ioc 容器, 添加内部 beans
+    // 创建 WebApplicationContext, 并指定一个 strategy
     this.context = new WebApplicationContext( new ServletBeanDefinitionStrategy() );
+
+    // 初始化, "" 意味着扫描 classpath 下的所有类
     this.context.init("");
 
+    // 在 this.context 中注册所有 framework 使用的所有 bean
     for (Class<?> type : this.internalBeans) {
-      String beanId = type.getSimpleName().toLowerCase().charAt(0)
-          + type.getSimpleName().substring(1);
+      String beanId = type.getSimpleName().toLowerCase().charAt(0) + type.getSimpleName().substring(1);
       this.context.registerBean(beanId, BeanScope.SINGLETON, type);
     }
 
-    // 添加父容器
-    ApplicationContext parentContext =
-        (ApplicationContext) this.getServletContext().getAttribute("context");
+    // 如果在 ServletContext 中有父容器, 添加父容器
+    ApplicationContext parentContext = (ApplicationContext) this.getServletContext().getAttribute("context");
     if (context == null) return;
     this.context.setParentContext(parentContext);
 
   }
 
   // init this.handlerMapping
-  private void initHandlerMapping(WebApplicationContext context) {
+  private void initHandlerMappingList(WebApplicationContext context) {
 
     RequestMappingHandlerMapping handlerMapping =
       (RequestMappingHandlerMapping) context.getBean("requestMappingHandlerMapping");
@@ -207,11 +213,26 @@ public class DispatcherServlet extends HttpServlet {
 
   }
 
+  /**
+   * 初始化 {@code this.multipartResolver}
+   *
+   * @param    context spring mvc 的 ioc 容器, 用于获取 bean
+   */
+  public void initMultipartResolver(WebApplicationContext context) {
+
+    StandardServletMultipartResolver multipartResolver = (StandardServletMultipartResolver)
+      context.getBean("standardServletMultipartResolver");
+
+    this.multipartResolver = multipartResolver;
+
+  }
+
   // HttpServlet 被创建时初始化的扩展点
   @Override
   public void init() throws ServletException {
     this.initContext();
-    this.initHandlerMapping(this.context);
+    this.initMultipartResolver(this.context);
+    this.initHandlerMappingList(this.context);
     this.initHandlerAdapter(this.context);
     this.initViewResolver(this.context);
   }

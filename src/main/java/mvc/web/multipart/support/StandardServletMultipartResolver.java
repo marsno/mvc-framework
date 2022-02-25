@@ -1,21 +1,36 @@
 package mvc.web.multipart.support;
 
 import jakarta.servlet.http.HttpServletRequest;
-import mvc.web.multipart.MultipartFile;
+import mvc.web.multipart.MultipartHttpServletRequest;
 import mvc.web.multipart.MultipartResolver;
 
 public class StandardServletMultipartResolver
-    implements MultipartResolver {
+  implements MultipartResolver {
 
+  /**
+   * 判断 request 是否是 multipart
+   * @param request current http request
+   */
   @Override
   public boolean isMultipart(HttpServletRequest request) {
 
-    if ( !request.getMethod().toLowerCase().equals("post") ) {
+    if ( !request.getMethod().toLowerCase().equals("post") )
       return false;
-    }
 
     String contentType = request.getContentType();
     return contentType != null && contentType.toLowerCase().startsWith("multipart/");
+
+  }
+
+  /**
+   * 将 HttpServletRequest 转化为 MultipartHttpServletRequest
+   *
+   * @param     request 要转化的 request
+   * @return    转化后的 request
+   */
+  @Override
+  public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) {
+    return new StandardMultipartHttpServletRequest(request);
   }
 
 }

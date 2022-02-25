@@ -1,6 +1,7 @@
 package mvc.web.multipart;
 
 import java.io.File;
+import java.io.IOException;
 
 public interface MultipartFile {
 
@@ -26,6 +27,6 @@ public interface MultipartFile {
    * 将文件存储在本地.
    * @param destination destination file
    */
-  void transferTo(File destination);
+  void transferTo(File destination) throws IOException;
 
 }

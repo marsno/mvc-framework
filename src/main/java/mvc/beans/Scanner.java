@@ -12,49 +12,44 @@ public class Scanner {
    * @return Class 列表, 或者 <code>null</code>, 如果此包下无文件.
    */
   public List<Class<?>> scan(String packageName) {
-    // classpath = class文件的根目录的绝对路径
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    String classpath = loader.getResource("").getPath();
-    classpath = classpath.substring( 1, classpath.length()-1 );
 
-    // paths = 所有class文件的绝对路径
+    // class 文件的根目录的绝对路径
+    String classpath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+
+    // 创建要扫描的包的 File 对象
     File file = null;
-    if (packageName.equals(""))
+    if ( packageName.equals("") ) {
       file = new File(classpath);
-    else
-      file = new File(classpath + "/" + packageName.replace(".", "/"));
-    List<String> paths = ToolMethods.getPathsUnderDirectory(file);
-    if (paths == null) return null;
-
-    // 处理 paths, 绝对路径 => 全类名
-    String front = file.getPath() + "\\";
-    if (!packageName.equals(""))
-      front = file.getPath().substring(
-        0,
-        file.getPath().length() - packageName.length()
-      );
-    for ( int i = 0; i < paths.size(); i++ ) {
-      String classname = paths.get(i)
-              .replace( front, "" )
-              .replace( ".class", "" )
-              .replace( "\\","." );
-      paths.set( i, classname );
+    } else {
+      String packagePath = classpath + File.separator + packageName.replace(".", File.separator);
+      file = new File(packagePath);
     }
-    List<String> classnames = paths;
+
+    // 获取所有类对应的文件的绝对路径
+    List<String> processingClassNameList = ToolMethods.getPathsUnderDirectory(file);
+    if (processingClassNameList == null) return null;
+
+    // 将所有的类对应的绝对路径转化为全类名
+    for ( int i = 0; i < processingClassNameList.size(); i++ ) {
+      String classname = processingClassNameList.get(i)
+        .substring(classpath.length())
+        .replace(".class", "").replace(File.separator, ".");
+      processingClassNameList.set(i, classname);
+    }
 
     // 获取所有类
     List<Class<?>> classObjects = new ArrayList<Class<?>>();
-    for (String classname : classnames) {
+    for (String classname : processingClassNameList) {
       try {
         Class<?> classObject = Class.forName(classname);
         classObjects.add( classObject );
-      }
-      catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }
     }
 
     return classObjects;
+
   }
 
 }
