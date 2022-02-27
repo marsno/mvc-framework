@@ -40,11 +40,6 @@ public class StandardMultipartHttpServletRequest
     }
   }
 
-  @Override
-  public HttpMethod getRequestMethod() {
-    return null;
-  }
-
   private static class StandardMultipartFile implements MultipartFile {
 
     private final Part part;

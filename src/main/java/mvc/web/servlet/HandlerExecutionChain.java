@@ -1,18 +1,12 @@
 package mvc.web.servlet;
 
 import mvc.web.servlet.handler.HandlerInterceptor;
-import mvc.web.servlet.handler.HandlerMethod;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // 由 HandlerMapping 返回, consists of handler and HandlerInterceptors
 public class HandlerExecutionChain {
-
-  // no parameter constructor
-  public HandlerExecutionChain() {
-    super();
-  }
 
   // 主要执行对象
   private Object handler = null;
@@ -36,6 +30,10 @@ public class HandlerExecutionChain {
    */
   public void registerInterceptor(HandlerInterceptor interceptor) {
     this.interceptors.add(interceptor);
+  }
+
+  public HandlerExecutionChain() {
+    super();
   }
 
 }

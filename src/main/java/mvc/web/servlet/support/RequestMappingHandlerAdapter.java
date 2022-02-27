@@ -36,17 +36,17 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
                               Object handler ) {
 
     // 调用 controller 的 handler
-    Object returnObject = this.invokeHandlerMethod( request ,response, (HandlerMethod) handler );
-    if (returnObject == null) {
+    Object controllerResult = this.invokeHandlerMethod( request ,response, (HandlerMethod) handler );
+
+    // 处理调用 controller 的结果
+    if (controllerResult == null) {
       return new ModelAndView();
     }
-    else if (returnObject.getClass() == ModelAndView.class) {
-      return (ModelAndView) returnObject;
+    else if (controllerResult.getClass() == ModelAndView.class) {
+      return (ModelAndView) controllerResult;
     }
     else {
-      ModelAndView modelAndView = new ModelAndView();
-      modelAndView.addObject( "string", (String) returnObject );
-      return modelAndView;
+      return new ModelAndView();
     }
 
   }

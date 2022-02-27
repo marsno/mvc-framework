@@ -47,10 +47,12 @@ public class ApplicationContext implements BeanFactory {
 
   /**
    * 从容器中获取bean的实例, 如果此容器中没有, 尝试从父容器中获取
-   * @param beanId 想要获取bean实例的 bean id
-   * @return 返回 bean 的实例, 如果容器中没有此 id 对应的 bean, 返回 null.
+   *
+   * @return    返回 bean 的实例, 如果容器中没有此 id 对应的 bean, 返回 null.
+   * @param     beanId 想要获取bean实例的 bean id
    */
   public Object getBean(String beanId) {
+
     // BeanFactory 没有这个bean, 返回{@Code null}
     if (this.beanDefinitionMap.get(beanId) == null)
       if (this.parentContext != null)
@@ -84,6 +86,7 @@ public class ApplicationContext implements BeanFactory {
       }
     }
     return null;
+
   }
 
   /**

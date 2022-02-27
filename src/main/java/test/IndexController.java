@@ -8,7 +8,7 @@ import mvc.web.servlet.config.RequestMapping;
 @Controller
 public class IndexController {
 
-  @RequestMapping("/index")
+  @RequestMapping("/test")
   public ModelAndView index(HttpServletRequest request) {
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("/index.jsp");

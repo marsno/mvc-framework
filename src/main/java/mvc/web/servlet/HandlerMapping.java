@@ -10,9 +10,10 @@ public interface HandlerMapping {
 
   /**
    * 根据 HttpServletRequest 请求, 返回 HandlerExecutionChain
+   *
    * @return request 对应的 handler 执行链;
    *         或者 <code>null</code>, 如果没有对应 handler
    */
-  public HandlerExecutionChain getHandler(HttpServletRequest request);
+  HandlerExecutionChain getHandler(HttpServletRequest request);
 
 }

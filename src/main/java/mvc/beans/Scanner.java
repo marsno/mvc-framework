@@ -29,6 +29,13 @@ public class Scanner {
     List<String> processingClassNameList = ToolMethods.getPathsUnderDirectory(file);
     if (processingClassNameList == null) return null;
 
+    // 只保留以 ".class" 为后缀的 java 文件, 剔除其他文件, 例如 ".yaml"
+    for (int index = processingClassNameList.size() - 1; index >= 0; index--) {
+      if ( !processingClassNameList.get(index).endsWith(".class") ) {
+        processingClassNameList.remove(index);
+      }
+    }
+
     // 将所有的类对应的绝对路径转化为全类名
     for ( int i = 0; i < processingClassNameList.size(); i++ ) {
       String classname = processingClassNameList.get(i)
