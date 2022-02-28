@@ -1,15 +1,15 @@
-package mvc.web.servlet.config;
+package mvc.web.bind.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target( {ElementType.TYPE, ElementType.METHOD} )
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
+public @interface PathVariable {
 
-  // uri
+  // uri 中定义的变量 String
   String value();
 
 }

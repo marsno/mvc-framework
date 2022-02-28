@@ -8,7 +8,7 @@ import mvc.beans.config.Component;
 import mvc.beans.di.Autowired;
 import mvc.beans.di.Value;
 import mvc.web.servlet.HandlerMapping;
-import mvc.web.servlet.config.Controller;
+import mvc.web.bind.annotation.Controller;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

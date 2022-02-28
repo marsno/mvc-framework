@@ -1,15 +1,17 @@
-package mvc.web.servlet.config;
+package mvc.web.bind.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.PARAMETER)
+@Target( {ElementType.TYPE, ElementType.METHOD} )
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PathVariable {
+public @interface RequestMapping {
 
-  // uri 中定义的变量 String
+  // URI
   String value();
+
+  String method() default "get";
 
 }

@@ -1,4 +1,4 @@
-package mvc.web.servlet.config;
+package mvc.web.bind.annotation;
 
 import mvc.beans.config.BeanScope;
 

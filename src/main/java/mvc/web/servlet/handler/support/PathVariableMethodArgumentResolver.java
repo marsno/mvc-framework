@@ -2,7 +2,7 @@ package mvc.web.servlet.handler.support;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import mvc.web.servlet.config.PathVariable;
+import mvc.web.bind.annotation.PathVariable;
 import mvc.web.servlet.handler.HandlerMethod;
 import mvc.web.servlet.handler.HandlerMethodArgumentResolver;
 import mvc.web.servlet.handler.MethodParameter;

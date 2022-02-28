@@ -3,7 +3,7 @@ package mvc.web.servlet.context;
 import mvc.beans.ApplicationContext;
 import mvc.beans.BeanDefinition;
 import mvc.beans.BeanDefinitionStrategy;
-import mvc.web.servlet.config.Controller;
+import mvc.web.bind.annotation.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
