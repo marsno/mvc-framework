@@ -1,4 +1,4 @@
-package pers.mars.mvc.beans;
+package pers.mars.mvc.context;
 
 import java.util.List;
 import java.util.Map;

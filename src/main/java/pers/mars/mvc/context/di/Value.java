@@ -1,4 +1,4 @@
-package pers.mars.mvc.beans.di;
+package pers.mars.mvc.context.di;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

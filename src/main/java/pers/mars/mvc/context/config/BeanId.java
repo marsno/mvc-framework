@@ -1,4 +1,4 @@
-package pers.mars.mvc.beans.config;
+package pers.mars.mvc.context.config;
 
 public class BeanId {
 

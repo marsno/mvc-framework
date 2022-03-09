@@ -1,6 +1,6 @@
-package pers.mars.mvc.beans;
+package pers.mars.mvc.context;
 
-import pers.mars.mvc.beans.config.BeanScope;
+import pers.mars.mvc.context.config.BeanScope;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

@@ -5,7 +5,7 @@
 </head>
 <body>
 
-    <div>mvc is working</div>
+<div>mvc is working</div>
 
 </body>
 </html>

@@ -1,11 +1,11 @@
-package pers.mars.mvc.beans.support;
+package pers.mars.mvc.context.support;
 
-import pers.mars.mvc.beans.BeanDefinition;
-import pers.mars.mvc.beans.BeanDefinitionStrategy;
-import pers.mars.mvc.beans.config.BeanId;
-import pers.mars.mvc.beans.config.Component;
-import pers.mars.mvc.beans.di.Autowired;
-import pers.mars.mvc.beans.di.Value;
+import pers.mars.mvc.context.BeanDefinition;
+import pers.mars.mvc.context.BeanDefinitionStrategy;
+import pers.mars.mvc.context.config.BeanId;
+import pers.mars.mvc.context.config.Component;
+import pers.mars.mvc.context.di.Autowired;
+import pers.mars.mvc.context.di.Value;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

@@ -1,19 +1,14 @@
-package pers.mars.mvc.web.bind.annotation;
-
-import pers.mars.mvc.context.config.BeanScope;
+package pers.mars.mvc.context.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 在类上使用此注解, 将类标记为一个配置类
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Controller {
-
-  // bean id
-  String value() default "";
-
-  BeanScope scope() default BeanScope.SINGLETON;
-
+public @interface Configuration {
 }

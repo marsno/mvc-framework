@@ -3,8 +3,7 @@ package pers.mars.mvc.web.servlet.context;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import pers.mars.mvc.beans.ApplicationContext;
-import pers.mars.mvc.beans.support.BasicBeanDefinitionStrategy;
+import pers.mars.mvc.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * 实现了 ServletContextListener 接口, 用于在 ServletContext 被创建时,
@@ -17,9 +16,15 @@ public class ContextLoaderListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-    ApplicationContext context = new ApplicationContext(
-      new BasicBeanDefinitionStrategy() );
-    context.init("");
+    String configurationClassName = servletContextEvent.getServletContext().getInitParameter("configurationClassName");
+    Class<?> configurationClass = null;
+    try {
+      configurationClass = Class.forName(configurationClassName);
+    }
+    catch (ClassNotFoundException exception) {
+      exception.printStackTrace();
+    }
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(configurationClass);
 
     // 将 ioc 容器添加到 ServletContext 中
     ServletContext servletContext = servletContextEvent.getServletContext();
@@ -28,6 +33,7 @@ public class ContextLoaderListener implements ServletContextListener {
   }
 
   @Override
-  public void contextDestroyed(ServletContextEvent servletContextEvent) {}
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
+  }
 
 }

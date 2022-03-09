@@ -1,4 +1,4 @@
-package pers.mars.mvc.beans;
+package pers.mars.mvc.context;
 
 /**
  * IoC 容器, 创建 bean, 设置所有 fields

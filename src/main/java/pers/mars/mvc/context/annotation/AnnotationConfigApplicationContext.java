@@ -1,20 +1,27 @@
-package pers.mars.mvc.beans;
+package pers.mars.mvc.context.annotation;
 
-import pers.mars.mvc.beans.config.BeanScope;
-import pers.mars.mvc.beans.config.BeanId;
-import pers.mars.mvc.beans.di.Autowired;
-import pers.mars.mvc.beans.di.Value;
-
+import pers.mars.mvc.context.ApplicationContext;
+import pers.mars.mvc.context.BeanDefinition;
+import pers.mars.mvc.context.BeanDefinitionStrategy;
+import pers.mars.mvc.context.Scanner;
+import pers.mars.mvc.context.config.BeanId;
+import pers.mars.mvc.context.config.BeanScope;
+import pers.mars.mvc.context.di.Autowired;
+import pers.mars.mvc.context.di.Value;
+import pers.mars.mvc.web.servlet.context.ServletBeanDefinitionStrategy;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ApplicationContext implements BeanFactory {
+public class AnnotationConfigApplicationContext implements ApplicationContext {
 
   // parent context
   protected ApplicationContext parentContext = null;
+
+  // 唯一的配置类对象
+  protected Object configuration = null;
 
   // 用于获取所有类的 class 对象
   protected Scanner scanner = new Scanner();
@@ -27,7 +34,7 @@ public class ApplicationContext implements BeanFactory {
    *
    * 默认使用的实现类是: BasicBeanDefinitionStrategy
    */
-  protected BeanDefinitionStrategy beanDefinitionStrategy = null;
+  protected BeanDefinitionStrategy beanDefinitionStrategy = new ServletBeanDefinitionStrategy();
 
   /**
    * 所有 bean 的 BeanDefinition, 包括在 this.singletonObjects
@@ -224,24 +231,42 @@ public class ApplicationContext implements BeanFactory {
   }
 
   /**
-   * 初始化容器时, 指定扫描的包
-   * @param packageName 包名, 形如 "mvc.beans", 若为 <code>""</code>, 扫描所有包.
+   * 初始化容器.
+   *
+   * @param  packageName 包名, 形如 "mvc.context", 若为 <code>""</code>, 扫描所有包.
    */
-  public void init(String packageName) {
+  private void init(String packageName) {
     this.initBeanDefinitionMap(packageName);
     this.initSingletonObjects();
   }
 
-  public ApplicationContext() {
-    super();
-  }
-
   /**
-   * @param beanDefinitionStrategy 指定一个 strategy
+   * 通过配置类构建 AnnotationConfigApplicationContext
+   *
+   * @param  configuration 配置类的 class 对象
    */
-  public ApplicationContext(BeanDefinitionStrategy beanDefinitionStrategy) {
-    super();
-    this.beanDefinitionStrategy = beanDefinitionStrategy;
+  public AnnotationConfigApplicationContext(Class<?> configuration) {
+
+    if (configuration == null) {
+      return;
+    }
+
+    try {
+      this.configuration = configuration.getDeclaredConstructor().newInstance();
+    }
+    catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      e.printStackTrace();
+    }
+
+    String basePackageName = null;
+    if ( configuration.isAnnotationPresent(ComponentScan.class) ) {
+      basePackageName = configuration.getAnnotation(ComponentScan.class).value();
+    }
+
+    if (basePackageName != null) {
+      this.init(basePackageName);
+    }
+
   }
 
 }

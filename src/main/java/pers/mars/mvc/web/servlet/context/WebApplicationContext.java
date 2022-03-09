@@ -1,10 +1,8 @@
 package pers.mars.mvc.web.servlet.context;
 
-import pers.mars.mvc.beans.ApplicationContext;
-import pers.mars.mvc.beans.BeanDefinition;
-import pers.mars.mvc.beans.BeanDefinitionStrategy;
+import pers.mars.mvc.context.BeanDefinition;
+import pers.mars.mvc.context.annotation.AnnotationConfigApplicationContext;
 import pers.mars.mvc.web.bind.annotation.Controller;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +14,12 @@ import java.util.Map;
  * - @Component
  * - @Controller
  */
-public class WebApplicationContext extends ApplicationContext {
+public class WebApplicationContext extends AnnotationConfigApplicationContext {
+
+  // getter
+  public Object getConfiguration() {
+    return this.configuration;
+  }
 
   /**
    * 遍历 this.singletonObjects, 返回所有 controller 的 BeanDefinition.
@@ -39,12 +42,10 @@ public class WebApplicationContext extends ApplicationContext {
   }
 
   /**
-   * 创建 WebApplicationContext 并制定一个 strategy 用于定义 bean definition
-   * @param beanDefinitionStrategy 指定一个 strategy
+   * 指定一个配置类
    */
-  public WebApplicationContext(BeanDefinitionStrategy beanDefinitionStrategy) {
-    super();
-    this.beanDefinitionStrategy = beanDefinitionStrategy;
+  public WebApplicationContext(Class<?> configuration) {
+    super(configuration);
   }
 
 }
