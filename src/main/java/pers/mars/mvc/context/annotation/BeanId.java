@@ -1,4 +1,4 @@
-package pers.mars.mvc.context.config;
+package pers.mars.mvc.context.annotation;
 
 public class BeanId {
 

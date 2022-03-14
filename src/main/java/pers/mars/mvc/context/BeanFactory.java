@@ -7,6 +7,8 @@ public interface BeanFactory {
    * @param beanId 获取bean实例的 bean id
    * @return bean的实例或者 {@code null}, 如果没有此id的bean,
    */
-  public Object getBean(String beanId);
+  Object getBean(String beanId);
+
+  <T> T getBean(Class<T> requiredType);
 
 }

@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import pers.mars.mvc.context.BeanDefinition;
-import pers.mars.mvc.context.config.BeanScope;
+import pers.mars.mvc.context.annotation.BeanScope;
 import pers.mars.mvc.web.multipart.MultipartResolver;
 import pers.mars.mvc.web.multipart.support.StandardServletMultipartResolver;
 import pers.mars.mvc.web.bind.annotation.RequestMapping;
@@ -63,15 +63,6 @@ public class DispatcherServlet extends HttpServlet {
    */
   protected void initContext() {
 
-    this.internalBeans.add(RequestMappingHandlerMapping.class);
-    this.internalBeans.add(RequestMappingHandlerAdapter.class);
-    this.internalBeans.add(InternalResourceViewResolver.class);
-    this.internalBeans.add(NormalMethodArgumentResolver.class);
-    this.internalBeans.add(RequestParamMethodArgumentResolver.class);
-    this.internalBeans.add(PathVariableMethodArgumentResolver.class);
-    this.internalBeans.add(StandardServletMultipartResolver.class);
-    this.internalBeans.add(InterceptorRegistry.class);
-
     String configurationClassName = this.getServletConfig().getInitParameter("defaultConfigurationClass");
     Class<?> configuration = null;
     try {
@@ -81,6 +72,15 @@ public class DispatcherServlet extends HttpServlet {
       exception.printStackTrace();
     }
     this.context = new WebApplicationContext(configuration);
+
+    this.internalBeans.add(RequestMappingHandlerMapping.class);
+    this.internalBeans.add(RequestMappingHandlerAdapter.class);
+    this.internalBeans.add(InternalResourceViewResolver.class);
+    this.internalBeans.add(NormalMethodArgumentResolver.class);
+    this.internalBeans.add(RequestParamMethodArgumentResolver.class);
+    this.internalBeans.add(PathVariableMethodArgumentResolver.class);
+    this.internalBeans.add(StandardServletMultipartResolver.class);
+    this.internalBeans.add(InterceptorRegistry.class);
 
     // 在 this.context 中注册所有 framework 使用的所有 bean
     for (Class<?> type : this.internalBeans) {
@@ -95,13 +95,12 @@ public class DispatcherServlet extends HttpServlet {
    *
    * @param    context 用于获取 bean
    */
-  protected void initHandlerMappingList(WebApplicationContext context) {
+  protected void initHandlerMappings(WebApplicationContext context) {
 
     RequestMappingHandlerMapping handlerMapping
       = (RequestMappingHandlerMapping) context.getBean("requestMappingHandlerMapping");
 
     this.initRequestMappingHandlerMapping(handlerMapping, context);
-
     this.handlerMappingList.add(handlerMapping);
 
   }
@@ -126,8 +125,7 @@ public class DispatcherServlet extends HttpServlet {
 
   /** init this.viewResolverList */
   protected void initViewResolver(WebApplicationContext context) {
-    this.viewResolver =
-    (ViewResolver) context.getBean("internalResourceViewResolver");
+    this.viewResolver = (ViewResolver) context.getBean("internalResourceViewResolver");
   }
 
   /** this.service 调用 */
@@ -206,16 +204,18 @@ public class DispatcherServlet extends HttpServlet {
 
     // 注入 InterceptorRegistry
     InterceptorRegistry registry = (InterceptorRegistry) context.getBean("interceptorRegistry");
-    Object configuration = context.getConfiguration();
-    if ( configuration instanceof WebMvcConfigurer ) {
-      ((WebMvcConfigurer) configuration).addInterceptors(registry);
+    WebMvcConfigurer webMvcConfigurer = context.getBean(WebMvcConfigurer.class);
+    if (webMvcConfigurer != null) {
+      webMvcConfigurer.addInterceptors(registry);
     }
-
     handlerMapping.setInterceptorRegistry(registry);
 
     // 获取所有 controller 的 BeanDefinition
     List<BeanDefinition> bds = context.getControllers();
-    if (bds == null) return;
+    if (bds == null) {
+      System.out.println("没有任何 controller 被找到");
+      return;
+    }
 
     // 根据 controller 的 BeanDefinition 初始化 handlerMapping
     for (BeanDefinition bd : bds) {
@@ -366,7 +366,7 @@ public class DispatcherServlet extends HttpServlet {
 
     this.initContext();
     this.initMultipartResolver(this.context);
-    this.initHandlerMappingList(this.context);
+    this.initHandlerMappings(this.context);
     this.initHandlerAdapter(this.context);
     this.initViewResolver(this.context);
 

@@ -1,10 +1,18 @@
 package pers.mars.mvc.web.servlet.config.annotation;
 
-/**
- * 配置类实现此接口, 可以配置 HandlerInterceptor
- */
+import pers.mars.mvc.web.servlet.ViewResolver;
+import pers.mars.mvc.web.servlet.handler.HandlerMethodArgumentResolver;
+import java.util.List;
+
 public interface WebMvcConfigurer {
 
-  void addInterceptors(InterceptorRegistry registry);
+  default void addInterceptors(InterceptorRegistry registry) {
+  }
+
+  default void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+  }
+
+  default void addViewResolvers(List<ViewResolver> resolvers) {
+  }
 
 }

@@ -1,17 +1,22 @@
 package pers.mars.mvc.context;
 
+import pers.mars.mvc.file.ToolMethods;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scanner {
+/**
+ * 通过文件系统扫描一个指定的包
+ */
+public class ClassScanner {
 
   /**
-   * 扫描包, 返回所有 Class.
-   * @param packageName 只扫描哪个包, 如果等于 <code>""</code> 扫描所有包.
+   * 扫描一个指定的包, 返回包下所有的类的 class 对象列表
+   * @param packageName 只扫描哪个包, 如果等于 <code>""</code> 扫描 classpath
    * @return Class 列表, 或者 <code>null</code>, 如果此包下无文件.
    */
-  public List<Class<?>> scan(String packageName) {
+  public static List<Class<?>> scan(String packageName) {
 
     // class 文件的根目录的绝对路径
     String classpath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
@@ -57,6 +62,10 @@ public class Scanner {
 
     return classObjects;
 
+  }
+
+  public ClassScanner() {
+    super();
   }
 
 }

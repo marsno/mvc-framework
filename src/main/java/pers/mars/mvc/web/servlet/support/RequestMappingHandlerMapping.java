@@ -5,10 +5,8 @@ import pers.mars.mvc.web.bind.annotation.RequestMethod;
 import pers.mars.mvc.web.servlet.HandlerMapping;
 import pers.mars.mvc.web.servlet.config.annotation.InterceptorRegistry;
 import pers.mars.mvc.web.servlet.HandlerExecutionChain;
-import pers.mars.mvc.web.servlet.handler.HandlerInterceptor;
 import pers.mars.mvc.web.servlet.handler.HandlerMethod;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
@@ -33,19 +31,15 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
    */
   @Override
   public HandlerExecutionChain getHandler(HttpServletRequest request) {
-
     HandlerExecutionChain chain = new HandlerExecutionChain();
-
     boolean hasHandler = this.addHandler(chain, request);
     if (!hasHandler) {
       return null;
     }
-
     chain.registerInterceptors(
       this.interceptorRegistry.getInterceptors(request.getRequestURI())
     );
     return chain;
-
   }
 
   /**
@@ -54,9 +48,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
    * @param handlerMethod uri 对应的 HandlerMethod 对象
    */
   public void registerHandlerMethod( String uri, HandlerMethod handlerMethod ) {
-
     this.handlerMethodMap.put( uri, handlerMethod );
-
   }
 
   // setter

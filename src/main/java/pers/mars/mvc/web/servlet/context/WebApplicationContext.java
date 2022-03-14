@@ -2,7 +2,7 @@ package pers.mars.mvc.web.servlet.context;
 
 import pers.mars.mvc.context.BeanDefinition;
 import pers.mars.mvc.context.annotation.AnnotationConfigApplicationContext;
-import pers.mars.mvc.web.bind.annotation.Controller;
+import pers.mars.mvc.context.annotation.Controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +16,6 @@ import java.util.Map;
  */
 public class WebApplicationContext extends AnnotationConfigApplicationContext {
 
-  // getter
-  public Object getConfiguration() {
-    return this.configuration;
-  }
-
   /**
    * 遍历 this.singletonObjects, 返回所有 controller 的 BeanDefinition.
    * @return 所有 controller 的 BeanDefinition;
@@ -29,14 +24,13 @@ public class WebApplicationContext extends AnnotationConfigApplicationContext {
   public List<BeanDefinition> getControllers() {
 
     List<BeanDefinition> controllerBeanDefinitionList = new ArrayList<>();
-    for ( Map.Entry<String,BeanDefinition> entry : this.beanDefinitionMap.entrySet() ) {
-      if ( !entry.getValue().getBeanClass().isAnnotationPresent(Controller.class) )
+    for (BeanDefinition beanDefinition : this.beanDefinitionMap.values()) {
+      if ( !beanDefinition.getBeanClass().isAnnotationPresent(Controller.class) )
         continue;
-      controllerBeanDefinitionList.add( entry.getValue() );
+      controllerBeanDefinitionList.add( beanDefinition );
     }
 
     if (controllerBeanDefinitionList.size() == 0) return null;
-
     return controllerBeanDefinitionList;
 
   }

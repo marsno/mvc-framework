@@ -1,6 +1,4 @@
-package pers.mars.mvc.web.bind.annotation;
-
-import pers.mars.mvc.context.config.BeanScope;
+package pers.mars.mvc.context.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Controller {
 
-  // bean id
+  // bean name
   String value() default "";
 
   BeanScope scope() default BeanScope.SINGLETON;

@@ -1,25 +1,12 @@
 package pers.mars.mvc.context;
 
-import pers.mars.mvc.context.config.BeanScope;
-
+import pers.mars.mvc.context.annotation.BeanScope;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 // 用于存储一个bean的定义信息
 public class BeanDefinition {
-
-  // constructor
-  public BeanDefinition() {
-    super();
-  }
-
-  // normal constructor
-  public BeanDefinition(String id, BeanScope scope, Class<?> type) {
-    this.id = id;
-    this.scope = scope;
-    this.type = type;
-  }
 
   // bean 的 id
   private String id;
@@ -30,15 +17,8 @@ public class BeanDefinition {
   // bean 的 class
   private Class<?> type;
 
-  /**
-   * bean 的所有字段的值
-   * Object 可以的类型
-   * - String
-   * - Integer
-   * - Float
-   * - BeanId
-   */
-  private Map<Field,Object> fieldMap = new HashMap<Field,Object>();
+  // BeanId
+  private Map<Field,Object> fieldMap = new HashMap<>();
 
   // getter
   public Map<Field,Object> getFieldMap() {
@@ -82,6 +62,18 @@ public class BeanDefinition {
    */
   public void registerField(Field field, Object value) {
     this.fieldMap.put(field, value);
+  }
+
+  // constructor
+  public BeanDefinition() {
+    super();
+  }
+
+  // normal constructor
+  public BeanDefinition(String id, BeanScope scope, Class<?> type) {
+    this.id = id;
+    this.scope = scope;
+    this.type = type;
   }
 
 }
