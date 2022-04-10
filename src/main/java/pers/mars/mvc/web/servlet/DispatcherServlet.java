@@ -1,5 +1,7 @@
 package pers.mars.mvc.web.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
@@ -31,6 +33,8 @@ import java.util.Map;
 
 /** spring mvc 唯一的 HttpServlet, 也是整个框架最顶层的类 */
 public class DispatcherServlet extends HttpServlet {
+
+  private static Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
   /** DispatcherServlet 是否准备好接受请求 */
   protected boolean isReady = false;
@@ -71,7 +75,9 @@ public class DispatcherServlet extends HttpServlet {
     catch (ClassNotFoundException exception) {
       exception.printStackTrace();
     }
+
     this.context = new WebApplicationContext(configuration);
+    DispatcherServlet.logger.info("DispatcherServlet 使用的 IoC 容器已初始化");
 
     this.internalBeans.add(RequestMappingHandlerMapping.class);
     this.internalBeans.add(RequestMappingHandlerAdapter.class);

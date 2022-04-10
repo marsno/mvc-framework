@@ -10,11 +10,11 @@ import pers.mars.mvc.context.annotation.Controller;
 import pers.mars.mvc.web.bind.annotation.RequestMapping;
 
 @Controller
-@Scope(value = BeanScope.PROTOTYPE)
+@Scope(BeanScope.PROTOTYPE)
 @Lazy
 public class IndexController {
 
-  @RequestMapping(method = RequestMethod.GET, value = "/test")
+  @RequestMapping(value = "/test", method = RequestMethod.GET)
   public ModelAndView index(HttpServletRequest request) {
     ModelAndView modelAndView = new ModelAndView();
     modelAndView.setViewName("/index.jsp");

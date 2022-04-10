@@ -6,7 +6,7 @@ import pers.mars.mvc.web.servlet.config.annotation.InterceptorRegistry;
 import pers.mars.mvc.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan(value = "test")
+@ComponentScan("test")
 public class DefaultConfiguration implements WebMvcConfigurer {
 
   @Override

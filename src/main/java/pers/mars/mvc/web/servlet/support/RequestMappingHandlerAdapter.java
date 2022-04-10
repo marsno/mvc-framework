@@ -7,7 +7,6 @@ import pers.mars.mvc.web.servlet.handler.HandlerMethod;
 import pers.mars.mvc.web.servlet.ModelAndView;
 import pers.mars.mvc.web.servlet.handler.HandlerMethodArgumentResolver;
 import pers.mars.mvc.web.servlet.handler.MethodParameter;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -17,7 +16,8 @@ import java.util.List;
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
   // 用于在调用 handler 时, 生成 argument
-  private List<HandlerMethodArgumentResolver> argumentResolverList = new ArrayList<HandlerMethodArgumentResolver>();
+  private final List<HandlerMethodArgumentResolver> argumentResolverList
+    = new ArrayList<>();
 
   // 是否支持这个 handler
   @Override
