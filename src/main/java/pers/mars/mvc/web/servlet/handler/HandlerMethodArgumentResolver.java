@@ -10,8 +10,7 @@ public interface HandlerMethodArgumentResolver {
   boolean supportsParameter(MethodParameter parameter);
 
   // 生成 argument
-  Object resolveArgument(HttpServletRequest request,
-                         HttpServletResponse response,
-                         HandlerMethod handlerMethod,
-                         MethodParameter parameter);
+  Object resolveArgument(HttpServletRequest request, HttpServletResponse response,
+    HandlerMethod handlerMethod, MethodParameter parameter);
+
 }

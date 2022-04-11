@@ -18,8 +18,7 @@ public class InternalResourceViewResolver implements ViewResolver {
   @Override
   public View resolveViewName(String viewName) {
     viewName = this.prefix + viewName + this.suffix;
-    View view = new InternalResourceView(viewName);
-    return view;
+    return new InternalResourceView(viewName);
   }
 
 }

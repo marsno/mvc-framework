@@ -6,14 +6,14 @@ import pers.mars.mvc.web.bind.annotation.PathVariable;
 import pers.mars.mvc.web.servlet.handler.HandlerMethod;
 import pers.mars.mvc.web.servlet.handler.HandlerMethodArgumentResolver;
 import pers.mars.mvc.web.servlet.handler.MethodParameter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** Resolves method arguments annotated with an {@link PathVariable} */
-public class PathVariableMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class PathVariableMethodArgumentResolver
+  implements HandlerMethodArgumentResolver {
 
   /** no parameter constructor */
   public PathVariableMethodArgumentResolver() {

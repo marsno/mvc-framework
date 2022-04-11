@@ -12,7 +12,7 @@ import pers.mars.mvc.web.servlet.handler.MethodParameter;
  * 注解的 parameter, 由这个类生成 argument.
  */
 public class RequestParamMethodArgumentResolver
-    implements HandlerMethodArgumentResolver {
+  implements HandlerMethodArgumentResolver {
 
   /**
    * 有 {@link RequestParam} 注解的 parameter, 支持, return ture;
