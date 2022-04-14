@@ -1,7 +1,9 @@
-package pers.mars.mvc.web.servlet.handler;
+package pers.mars.mvc.web.servlet.handler.adapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import pers.mars.mvc.web.servlet.handler.HandlerMethod;
+import pers.mars.mvc.web.servlet.handler.MethodParameter;
 
 // 生成 argument 的类
 public interface HandlerMethodArgumentResolver {
@@ -11,6 +13,6 @@ public interface HandlerMethodArgumentResolver {
 
   // 生成 argument
   Object resolveArgument(HttpServletRequest request, HttpServletResponse response,
-    HandlerMethod handlerMethod, MethodParameter parameter);
+                         HandlerMethod handlerMethod, MethodParameter parameter);
 
 }

@@ -1,10 +1,10 @@
-package pers.mars.mvc.web.servlet.handler.support;
+package pers.mars.mvc.web.servlet.handler.adapter.support;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import pers.mars.mvc.web.bind.annotation.PathVariable;
+import pers.mars.mvc.web.servlet.handler.configuration.PathVariable;
 import pers.mars.mvc.web.servlet.handler.HandlerMethod;
-import pers.mars.mvc.web.servlet.handler.HandlerMethodArgumentResolver;
+import pers.mars.mvc.web.servlet.handler.adapter.HandlerMethodArgumentResolver;
 import pers.mars.mvc.web.servlet.handler.MethodParameter;
 import java.util.ArrayList;
 import java.util.List;

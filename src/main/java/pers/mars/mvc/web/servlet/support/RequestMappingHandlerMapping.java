@@ -1,9 +1,9 @@
 package pers.mars.mvc.web.servlet.support;
 
 import jakarta.servlet.http.HttpServletRequest;
-import pers.mars.mvc.web.bind.annotation.RequestMethod;
+import pers.mars.mvc.web.servlet.handler.configuration.RequestMethod;
 import pers.mars.mvc.web.servlet.HandlerMapping;
-import pers.mars.mvc.web.servlet.config.annotation.InterceptorRegistry;
+import pers.mars.mvc.web.servlet.handler.InterceptorRegistry;
 import pers.mars.mvc.web.servlet.HandlerExecutionChain;
 import pers.mars.mvc.web.servlet.handler.HandlerMethod;
 import java.util.HashMap;

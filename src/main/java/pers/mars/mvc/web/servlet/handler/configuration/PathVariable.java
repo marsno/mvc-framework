@@ -1,4 +1,4 @@
-package pers.mars.mvc.web.bind.annotation;
+package pers.mars.mvc.web.servlet.handler.configuration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

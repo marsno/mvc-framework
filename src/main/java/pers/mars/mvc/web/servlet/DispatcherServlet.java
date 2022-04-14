@@ -11,16 +11,16 @@ import pers.mars.mvc.context.BeanDefinition;
 import pers.mars.mvc.context.annotation.BeanScope;
 import pers.mars.mvc.web.multipart.MultipartResolver;
 import pers.mars.mvc.web.multipart.support.StandardServletMultipartResolver;
-import pers.mars.mvc.web.bind.annotation.RequestMapping;
-import pers.mars.mvc.web.servlet.config.annotation.InterceptorRegistry;
-import pers.mars.mvc.web.servlet.config.annotation.WebMvcConfigurer;
+import pers.mars.mvc.web.servlet.handler.configuration.RequestMapping;
+import pers.mars.mvc.web.servlet.handler.InterceptorRegistry;
+import pers.mars.mvc.web.servlet.handler.configuration.WebMvcConfigurer;
 import pers.mars.mvc.web.servlet.context.WebApplicationContext;
 import pers.mars.mvc.web.servlet.handler.HandlerMethod;
-import pers.mars.mvc.web.servlet.handler.support.NormalMethodArgumentResolver;
-import pers.mars.mvc.web.servlet.handler.support.PathVariableMethodArgumentResolver;
-import pers.mars.mvc.web.servlet.handler.support.RequestParamMethodArgumentResolver;
+import pers.mars.mvc.web.servlet.handler.adapter.support.NormalMethodArgumentResolver;
+import pers.mars.mvc.web.servlet.handler.adapter.support.PathVariableMethodArgumentResolver;
+import pers.mars.mvc.web.servlet.handler.adapter.support.RequestParamMethodArgumentResolver;
 import pers.mars.mvc.web.servlet.support.InternalResourceViewResolver;
-import pers.mars.mvc.web.servlet.support.RequestMappingHandlerAdapter;
+import pers.mars.mvc.web.servlet.handler.adapter.support.RequestMappingHandlerAdapter;
 import pers.mars.mvc.web.servlet.support.RequestMappingHandlerMapping;
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,8 +135,10 @@ public class DispatcherServlet extends HttpServlet {
   }
 
   /** this.service 调用 */
-  protected void doDispatch( HttpServletRequest request,
-                           HttpServletResponse response ) {
+  protected void doDispatch(
+    HttpServletRequest request,
+    HttpServletResponse response
+  ) {
 
     HttpServletRequest processedRequest = checkMultipart(request);
 

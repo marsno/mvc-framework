@@ -72,11 +72,11 @@ public class GenericApplicationContext implements ApplicationContext, BeanDefini
     BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanId);
     if (beanDefinition == null)
       return null;
+
     BeanScope beanScope = beanDefinition.getScope();
     if (beanScope == BeanScope.SINGLETON)
       return this.getSingletonObject(beanDefinition);
-    else
-      return this.getPrototypeObject(beanDefinition);
+    return this.getPrototypeObject(beanDefinition);
   }
 
   /**

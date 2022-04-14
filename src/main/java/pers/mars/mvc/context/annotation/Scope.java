@@ -8,5 +8,4 @@ import java.lang.annotation.*;
 public @interface Scope {
 
   BeanScope value() default BeanScope.SINGLETON;
-
 }

@@ -1,12 +1,13 @@
-package pers.mars.mvc.web.servlet.support;
+package pers.mars.mvc.web.servlet.handler.adapter.support;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import pers.mars.mvc.web.servlet.HandlerAdapter;
 import pers.mars.mvc.web.servlet.handler.HandlerMethod;
 import pers.mars.mvc.web.servlet.ModelAndView;
-import pers.mars.mvc.web.servlet.handler.HandlerMethodArgumentResolver;
 import pers.mars.mvc.web.servlet.handler.MethodParameter;
+import pers.mars.mvc.web.servlet.handler.adapter.HandlerAdapter;
+import pers.mars.mvc.web.servlet.handler.adapter.HandlerMethodArgumentResolver;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -16,14 +17,7 @@ import java.util.List;
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
   // 用于在调用 handler 时, 生成 argument
-  private final List<HandlerMethodArgumentResolver> argumentResolverList
-    = new ArrayList<>();
-
-  // 是否支持这个 handler
-  @Override
-  public boolean support(Object handler) {
-    return handler.getClass() == HandlerMethod.class;
-  }
+  private final List<HandlerMethodArgumentResolver> argumentResolverList = new ArrayList<>();
 
   /**
    * @param handler 仅处理类型为 {@link HandlerMethod} 的 handler
@@ -31,9 +25,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
    * @return {@link ModelAndView}
    */
   @Override
-  public ModelAndView handle( HttpServletRequest request,
-                              HttpServletResponse response,
-                              Object handler ) {
+  public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
     // 调用 controller 的 handler
     Object controllerResult = this.invokeHandlerMethod( request ,response, (HandlerMethod) handler );
@@ -54,12 +46,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
   /**
    * 调用 controller method, 返回 object,
    * 类型只会是 {@link ModelAndView}, {@link String}
-   *
    * @return {@link ModelAndView}, {@link String}, null
    */
-  protected Object invokeHandlerMethod( HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        HandlerMethod handlerMethod ) {
+  protected Object invokeHandlerMethod(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    HandlerMethod handlerMethod ) {
+
     // 构造调用所需要的参数
     Method method = handlerMethod.getMethod();
     Parameter[] parameters = handlerMethod.getParameters();

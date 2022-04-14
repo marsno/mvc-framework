@@ -1,6 +1,5 @@
-package pers.mars.mvc.web.servlet.config.annotation;
+package pers.mars.mvc.web.servlet.handler;
 
-import pers.mars.mvc.web.servlet.handler.HandlerInterceptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

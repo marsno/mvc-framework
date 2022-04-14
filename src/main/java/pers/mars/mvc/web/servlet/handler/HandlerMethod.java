@@ -1,6 +1,6 @@
 package pers.mars.mvc.web.servlet.handler;
 
-import pers.mars.mvc.web.bind.annotation.RequestMethod;
+import pers.mars.mvc.web.servlet.handler.configuration.RequestMethod;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

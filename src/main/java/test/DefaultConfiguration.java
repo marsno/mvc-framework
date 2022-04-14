@@ -2,8 +2,8 @@ package test;
 
 import pers.mars.mvc.context.annotation.ComponentScan;
 import pers.mars.mvc.context.annotation.Configuration;
-import pers.mars.mvc.web.servlet.config.annotation.InterceptorRegistry;
-import pers.mars.mvc.web.servlet.config.annotation.WebMvcConfigurer;
+import pers.mars.mvc.web.servlet.handler.InterceptorRegistry;
+import pers.mars.mvc.web.servlet.handler.configuration.WebMvcConfigurer;
 
 @Configuration
 @ComponentScan("test")

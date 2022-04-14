@@ -4,10 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import pers.mars.mvc.context.annotation.BeanScope;
 import pers.mars.mvc.context.annotation.Lazy;
 import pers.mars.mvc.context.annotation.Scope;
-import pers.mars.mvc.web.bind.annotation.RequestMethod;
+import pers.mars.mvc.web.servlet.handler.configuration.RequestMethod;
 import pers.mars.mvc.web.servlet.ModelAndView;
 import pers.mars.mvc.context.annotation.Controller;
-import pers.mars.mvc.web.bind.annotation.RequestMapping;
+import pers.mars.mvc.web.servlet.handler.configuration.RequestMapping;
 
 @Controller
 @Scope(BeanScope.PROTOTYPE)

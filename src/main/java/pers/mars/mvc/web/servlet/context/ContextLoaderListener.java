@@ -20,8 +20,7 @@ public class ContextLoaderListener implements ServletContextListener {
     Class<?> configurationClass = null;
     try {
       configurationClass = Class.forName(configurationClassName);
-    }
-    catch (ClassNotFoundException exception) {
+    } catch (ClassNotFoundException exception) {
       exception.printStackTrace();
     }
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(configurationClass);
@@ -33,7 +32,6 @@ public class ContextLoaderListener implements ServletContextListener {
   }
 
   @Override
-  public void contextDestroyed(ServletContextEvent servletContextEvent) {
-  }
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {}
 
 }
