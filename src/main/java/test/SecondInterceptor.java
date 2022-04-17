@@ -2,8 +2,8 @@ package test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import pers.mars.mvc.web.servlet.ModelAndView;
-import pers.mars.mvc.web.servlet.handler.HandlerInterceptor;
+import pers.mars.mvc.servlet.ModelAndView;
+import pers.mars.mvc.servlet.interceptor.HandlerInterceptor;
 
 public class SecondInterceptor implements HandlerInterceptor {
 

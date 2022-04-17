@@ -50,7 +50,7 @@ public class ClassScanner {
     }
 
     // 获取所有类
-    List<Class<?>> classObjects = new ArrayList<Class<?>>();
+    List<Class<?>> classObjects = new ArrayList<>();
     for (String classname : processingClassNameList) {
       try {
         Class<?> classObject = Class.forName(classname);

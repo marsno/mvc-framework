@@ -8,7 +8,7 @@
 
   <servlet>
     <servlet-name>DispatcherServlet</servlet-name>
-    <servlet-class>pers.mars.mvc.web.servlet.DispatcherServlet</servlet-class>
+    <servlet-class>pers.mars.mvc.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>defaultConfigurationClass</param-name>
       <param-value>test.DefaultConfiguration</param-value>

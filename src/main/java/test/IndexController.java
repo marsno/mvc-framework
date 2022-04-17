@@ -1,17 +1,13 @@
 package test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import pers.mars.mvc.context.annotation.BeanScope;
 import pers.mars.mvc.context.annotation.Lazy;
-import pers.mars.mvc.context.annotation.Scope;
-import pers.mars.mvc.web.servlet.handler.configuration.RequestMethod;
-import pers.mars.mvc.web.servlet.ModelAndView;
+import pers.mars.mvc.servlet.handler.configuration.RequestMethod;
+import pers.mars.mvc.servlet.ModelAndView;
 import pers.mars.mvc.context.annotation.Controller;
-import pers.mars.mvc.web.servlet.handler.configuration.RequestMapping;
+import pers.mars.mvc.servlet.handler.configuration.RequestMapping;
 
 @Controller
-@Scope(BeanScope.PROTOTYPE)
-@Lazy
 public class IndexController {
 
   @RequestMapping(value = "/test", method = RequestMethod.GET)
