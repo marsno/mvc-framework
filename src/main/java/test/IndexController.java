@@ -1,7 +1,6 @@
 package test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import pers.mars.mvc.context.annotation.Lazy;
 import pers.mars.mvc.servlet.handler.configuration.RequestMethod;
 import pers.mars.mvc.servlet.ModelAndView;
 import pers.mars.mvc.context.annotation.Controller;
