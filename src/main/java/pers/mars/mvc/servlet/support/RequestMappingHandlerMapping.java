@@ -17,7 +17,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
    * - "/question/9463"         精确的
    * - "/question/*"            带 "*" 匹配多个字符的
    */
-  private Map<String, HandlerMethod> handlerMethodMap = new HashMap<>();
+  private final Map<String, HandlerMethod> handlerMethodMap = new HashMap<>();
 
   private InterceptorRegistry interceptorRegistry = null;
 

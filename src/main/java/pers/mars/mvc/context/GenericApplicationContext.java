@@ -4,7 +4,6 @@ import pers.mars.mvc.context.annotation.Autowired;
 import pers.mars.mvc.context.annotation.BeanId;
 import pers.mars.mvc.context.annotation.BeanScope;
 import pers.mars.mvc.context.annotation.Lazy;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -13,19 +12,15 @@ import java.util.Map;
 
 /**
  * ioc 容器管理的 bean, bean 的形式有 2 种
- * @code BeanScope.SINGLETON, 单例的规范为, 单例的依赖只能是单例, 单例支持循环依赖
- * @code BeanScope.PROTOTYPE, 原型的规范为, 原型的依赖可以是单例, 也可以是原型, 原型不支持循环依赖
- *
- * 容器初始化时, 会检测 BeanDefinition 的单例和原型是否符合规范.
- * 若单例的依赖有原型, 会抛异常
- * 若原型有循环依赖, 也会抛异常
+ * @code BeanScope.SINGLETON, 单例的依赖只能是单例, 单例支持循环依赖
+ * @code BeanScope.PROTOTYPE
  */
 public class GenericApplicationContext implements ApplicationContext, BeanDefinitionRegistry {
 
   protected BeanDefinitionGenerator beanDefinitionGenerator = new BeanDefinitionGenerator();
 
   // key 是 bean name, value 是 bean 的 BeanDefinition
-  protected Map<String, BeanDefinition> beanDefinitionMap = null;
+  protected Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
   // 单例 bean name -> singleton instance
   protected Map<String, Object> singletonObjects = new HashMap<>();
@@ -58,7 +53,6 @@ public class GenericApplicationContext implements ApplicationContext, BeanDefini
    */
   @Override
   public void registerBeanDefinition( BeanDefinition beanDefinition ) {
-
     this.beanDefinitionMap.put(beanDefinition.getId(), beanDefinition);
   }
 

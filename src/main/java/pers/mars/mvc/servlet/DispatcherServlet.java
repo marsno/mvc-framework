@@ -6,13 +6,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import pers.mars.mvc.context.BeanDefinition;
+import pers.mars.mvc.context.annotation.AnnotationConfigApplicationContext;
 import pers.mars.mvc.context.annotation.BeanScope;
 import pers.mars.mvc.servlet.multipart.MultipartResolver;
 import pers.mars.mvc.servlet.multipart.support.StandardServletMultipartResolver;
 import pers.mars.mvc.servlet.handler.configuration.RequestMapping;
 import pers.mars.mvc.servlet.interceptor.InterceptorRegistry;
 import pers.mars.mvc.servlet.handler.configuration.WebMvcConfigurer;
-import pers.mars.mvc.servlet.context.WebApplicationContext;
 import pers.mars.mvc.servlet.handler.HandlerMethod;
 import pers.mars.mvc.servlet.handler.adapter.support.NormalMethodArgumentResolver;
 import pers.mars.mvc.servlet.handler.adapter.support.PathVariableMethodArgumentResolver;
@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
   protected List<Class<?>> internalBeans = new ArrayList<>();
 
   /** servlet context */
-  protected WebApplicationContext context = null;
+  protected AnnotationConfigApplicationContext context = null;
 
   /**
    * handler mapping list 里面有:
@@ -62,17 +62,17 @@ public class DispatcherServlet extends HttpServlet {
    * 将其设为 ioc 容器的父容器
    */
   protected void initContext() {
-
-    String configurationClassName = this.getServletConfig().getInitParameter("defaultConfigurationClass");
-    Class<?> configuration = null;
     try {
-      configuration = Class.forName(configurationClassName);
+      String configurationClassName = getServletConfig().getInitParameter("configurationClassName");
+      if (configurationClassName == null) {
+        this.context = new AnnotationConfigApplicationContext();
+      } else {
+        Class<?> configuration = Class.forName(configurationClassName);
+        this.context = new AnnotationConfigApplicationContext(configuration);
+      }
+    } catch (ClassNotFoundException e) {
+      this.context = new AnnotationConfigApplicationContext();
     }
-    catch (ClassNotFoundException exception) {
-      exception.printStackTrace();
-    }
-
-    this.context = new WebApplicationContext(configuration);
 
     this.internalBeans.add(RequestMappingHandlerMapping.class);
     this.internalBeans.add(RequestMappingHandlerAdapter.class);
@@ -83,32 +83,26 @@ public class DispatcherServlet extends HttpServlet {
     this.internalBeans.add(StandardServletMultipartResolver.class);
     this.internalBeans.add(InterceptorRegistry.class);
 
-    // 在 this.context 中注册所有 framework 使用的所有 bean
     for (Class<?> type : this.internalBeans) {
       String beanId = type.getSimpleName().toLowerCase().charAt(0) + type.getSimpleName().substring(1);
       this.context.registerBean(beanId, BeanScope.SINGLETON, type);
     }
-
   }
 
   /**
    * 初始化 {@code this.handlerMappingList}
-   *
-   * @param    context 用于获取 bean
+   * @param context 用于获取 bean
    */
-  protected void initHandlerMappings(WebApplicationContext context) {
-
+  protected void initHandlerMappings(AnnotationConfigApplicationContext context) {
     RequestMappingHandlerMapping handlerMapping
       = (RequestMappingHandlerMapping) context.getBean("requestMappingHandlerMapping");
 
-    this.initRequestMappingHandlerMapping(handlerMapping, context);
+    initRequestMappingHandlerMapping(context, handlerMapping);
     this.handlerMappingList.add(handlerMapping);
-
   }
 
   // init this.handlerAdapter
-  protected void initHandlerAdapter(WebApplicationContext context) {
-
+  protected void initHandlerAdapter(AnnotationConfigApplicationContext context) {
     this.handlerAdapter = (RequestMappingHandlerAdapter) context.getBean("requestMappingHandlerAdapter");
 
     PathVariableMethodArgumentResolver pathVariableMethodArgumentResolver
@@ -121,11 +115,10 @@ public class DispatcherServlet extends HttpServlet {
     this.handlerAdapter.registerArgumentResolver(pathVariableMethodArgumentResolver);
     this.handlerAdapter.registerArgumentResolver(normalMethodArgumentResolver);
     this.handlerAdapter.registerArgumentResolver(requestParamMethodArgumentResolver);
-
   }
 
   /** init this.viewResolverList */
-  protected void initViewResolver(WebApplicationContext context) {
+  protected void initViewResolver(AnnotationConfigApplicationContext context) {
     this.viewResolver = (ViewResolver) context.getBean("internalResourceViewResolver");
   }
 
@@ -147,8 +140,7 @@ public class DispatcherServlet extends HttpServlet {
         if (this.tryFindStaticResource(request, response)) {
           return;
         }
-      }
-      catch (IOException exception) {
+      } catch (IOException exception) {
         exception.printStackTrace();
       }
 
@@ -158,20 +150,21 @@ public class DispatcherServlet extends HttpServlet {
 
     }
 
-    if (!handlerExecutionChain.applyPreHandle(request, response)) {
+    if (!handlerExecutionChain.applyPreHandle(request, response))
       return;
-    }
 
-    ModelAndView modelAndView
-      = this.handlerAdapter.handle( request, response, handlerExecutionChain.getHandler() );
+    ModelAndView modelAndView = this.handlerAdapter.handle(
+      request,
+      response,
+      handlerExecutionChain.getHandler()
+    );
 
     handlerExecutionChain.applyPostHandle(request, response, modelAndView);
 
     // modelAndView 可能并没有设置 view, 只能 return 404, 若设置了, 渲染
     if (modelAndView.getViewName() != null) {
-      this.render(request, response, modelAndView);
-    }
-    else {
+      render(request, response, modelAndView);
+    } else {
       response.setStatus(404);
     }
 
@@ -186,42 +179,33 @@ public class DispatcherServlet extends HttpServlet {
   protected void render(
     HttpServletRequest request,
     HttpServletResponse response,
-    ModelAndView modelAndView ) {
+    ModelAndView modelAndView)
+  {
 
-    // 从 modelAndView 中获取 model
     Map<String,Object> model = modelAndView.getModelMap();
-
-    // 通过 ViewResolver 获取 View 对象
     View view = this.viewResolver.resolveViewName( modelAndView.getViewName() );
-
-    // 渲染
     view.render( request, response, model );
-
   }
 
   /**
    * @param handlerMapping 需要初始化的 handler mapping
    * @param context ioc 容器
    */
-  protected void initRequestMappingHandlerMapping(RequestMappingHandlerMapping handlerMapping,
-                                                  WebApplicationContext context ) {
+  protected void initRequestMappingHandlerMapping(
+    AnnotationConfigApplicationContext context,
+    RequestMappingHandlerMapping handlerMapping)
+  {
 
-    // 注入 InterceptorRegistry
     InterceptorRegistry registry = (InterceptorRegistry) context.getBean("interceptorRegistry");
     WebMvcConfigurer webMvcConfigurer = context.getBean(WebMvcConfigurer.class);
-    if (webMvcConfigurer != null) {
+    if (webMvcConfigurer != null)
       webMvcConfigurer.addInterceptors(registry);
-    }
+
     handlerMapping.setInterceptorRegistry(registry);
-
-    // 获取所有 controller 的 BeanDefinition
     List<BeanDefinition> bds = context.getControllers();
-    if (bds == null) {
-      System.out.println("没有任何 controller 被找到");
+    if (bds == null)
       return;
-    }
 
-    // 根据 controller 的 BeanDefinition 初始化 handlerMapping
     for (BeanDefinition bd : bds) {
       for ( Method method : bd.getBeanClass().getDeclaredMethods() ) {
         if ( !method.isAnnotationPresent(RequestMapping.class) )
@@ -239,57 +223,48 @@ public class DispatcherServlet extends HttpServlet {
         handlerMapping.registerHandlerMethod(handlerMethod.getRegexURI(), handlerMethod);
       }
     }
-
   }
 
   /**
    * 初始化 {@code this.multipartResolver}
-   *
    * @param context spring mvc 的 ioc 容器, 用于获取 bean
    */
-  protected void initMultipartResolver(WebApplicationContext context) {
+  protected void initMultipartResolver(AnnotationConfigApplicationContext context) {
 
     StandardServletMultipartResolver multipartResolver = (StandardServletMultipartResolver)
       context.getBean("standardServletMultipartResolver");
     if (multipartResolver == null) return;
 
     this.multipartResolver = multipartResolver;
-
   }
 
   /**
    * 将 request 从 HttpServletRequest 转化为 MultipartHttpServletRequest
    * 如果请求是 multipart 的情况下.
    *
-   * @param     request 当前要检查的 request
-   * @return    如果是 multipart, 则是 MultipartHttpServletRequest
+   * @param request 当前要检查的 request
+   * @return 如果是 multipart, 则是 MultipartHttpServletRequest
    */
   protected HttpServletRequest checkMultipart(HttpServletRequest request) {
 
-    // 如果 request is multipart, 将其转化为 MultipartHttpServletRequest
     if ( this.multipartResolver != null && this.multipartResolver.isMultipart(request) )
       return this.multipartResolver.resolveMultipart(request);
 
-    // 前面没有 return, 则 argument request 不是 multipart, 不做任何改变 return
     return request;
-
   }
 
   /**
    * 获取 HandlerExecutionChain 为了当前的 request
    *
-   * @return    一个 HandlerExecutionChain instance,
-   *            or {@code null} 如果没有 handler 被找到
-   * @param     request 当前的 request
+   * @return 一个 HandlerExecutionChain instance,
+   *         or {@code null} 如果没有 handler 被找到
+   * @param request 当前的 request
    */
   protected HandlerExecutionChain getHandler(HttpServletRequest request) {
 
-    // 如果一个 handler mapping 也没有, return null
-    if ( this.handlerMappingList.isEmpty() ) {
+    if (this.handlerMappingList.isEmpty())
       return null;
-    }
 
-    // 遍历 this.handlerMappingList, 获取 handler
     for (HandlerMapping handlerMapping : this.handlerMappingList) {
       HandlerExecutionChain handlerExecutionChain = handlerMapping.getHandler(request);
       if (handlerExecutionChain != null) {
@@ -297,27 +272,27 @@ public class DispatcherServlet extends HttpServlet {
       }
     }
 
-    // 前面没有 return, 说明没有 handler 被找到
     return null;
-
   }
 
   /**
    * 尝试将静态资源作为 response
    *
-   * @return    {@code true} 如果找到并返回, or {@code false} 如果没有找到
-   * @param     request 当前的 http request
-   * @param     response 当前的 http response
-   * @throws    FileNotFoundException 资源不存在
+   * @return {@code true} 如果找到并返回, or {@code false} 如果没有找到
+   * @param request 当前的 http request
+   * @param response 当前的 http response
+   * @throws FileNotFoundException 资源不存在
    */
-  protected boolean tryFindStaticResource(HttpServletRequest request, HttpServletResponse response)
-    throws IOException {
+  protected boolean tryFindStaticResource(
+    HttpServletRequest request,
+    HttpServletResponse response
+  ) throws IOException {
 
     String webRoot = request.getSession().getServletContext().getRealPath("");
 
     // 获取请求的 static file path
     String[] nodes = request.getRequestURI().split("/");
-    String filePath = webRoot.substring(0, webRoot.length() - 1);;
+    String filePath = webRoot.substring(0, webRoot.length() - 1);
     for (String node : nodes) {
       if ( node.equals("") ) continue;
       filePath += File.separator + node;
@@ -325,24 +300,21 @@ public class DispatcherServlet extends HttpServlet {
 
     // 判断文件是否存在
     File file = new File(filePath);
-    if ( !file.exists() ) {
+    if ( !file.exists() )
       return false;
-    }
 
     FileInputStream fileInputStream = new FileInputStream(file);
     ServletOutputStream outputStream = response.getOutputStream();
 
     byte[] buffer = new byte[1024];
-    while (fileInputStream.read(buffer) != -1) {
+    while (fileInputStream.read(buffer) != -1)
       outputStream.write(buffer);
-    }
 
     fileInputStream.close();
     outputStream.flush();
     outputStream.close();
 
     return true;
-
   }
 
   /**
@@ -358,7 +330,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     this.doDispatch(request, response);
-
   }
 
   /**
@@ -374,9 +345,7 @@ public class DispatcherServlet extends HttpServlet {
     this.initHandlerAdapter(this.context);
     this.initViewResolver(this.context);
 
-    // 运行到这里, 初始化完成, DispatcherServlet 准备好接受 request
     this.isReady = true;
-
   }
 
 }

@@ -19,6 +19,10 @@ public class ClassPathBeanDefinitionScanner {
 
   protected BeanDefinitionRegistry beanDefinitionRegistry;
 
+  public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
+    this.beanDefinitionRegistry = registry;
+  }
+
   /**
    * 扫描一个指定的包, 会将扫描到的带有指定注解的 bean 注册到 ioc 容器中
    * @param packageName 只扫描哪个包, 如果等于 <code>""</code> 扫描 classpath
@@ -29,10 +33,6 @@ public class ClassPathBeanDefinitionScanner {
 
   public BeanDefinitionRegistry getBeanDefinitionRegistry() {
     return this.beanDefinitionRegistry;
-  }
-
-  public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
-    this.beanDefinitionRegistry = registry;
   }
 
 }

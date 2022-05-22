@@ -28,10 +28,12 @@ public class NormalMethodArgumentResolver implements HandlerMethodArgumentResolv
    * @return argument, 或 <code>null</code>, 如果不支持
    */
   @Override
-  public Object resolveArgument(HttpServletRequest request,
-                                HttpServletResponse response,
-                                HandlerMethod handlerMethod,
-                                MethodParameter parameter) {
+  public Object resolveArgument(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    HandlerMethod handlerMethod,
+    MethodParameter parameter
+  ) {
 
     if ( !this.supportsParameter(parameter) )
       return null;

@@ -13,6 +13,6 @@ public @interface RequestMapping {
   String value();
 
   // 当前 URI 路径下, 能够接收的 request method
-  RequestMethod[] method() default {};
+  RequestMethod[] method() default RequestMethod.GET;
 
 }

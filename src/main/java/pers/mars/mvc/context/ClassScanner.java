@@ -1,14 +1,11 @@
 package pers.mars.mvc.context;
 
 import pers.mars.mvc.file.ToolMethods;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 通过文件系统扫描一个指定的包
- */
+/** 通过文件系统扫描一个指定的包 */
 public class ClassScanner {
 
   /**

@@ -41,10 +41,12 @@ public class PathVariableMethodArgumentResolver
    *            name 为指定名字的 argument
    */
   @Override
-  public Object resolveArgument(HttpServletRequest request,
-                                HttpServletResponse response,
-                                HandlerMethod handlerMethod,
-                                MethodParameter parameter) {
+  public Object resolveArgument(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    HandlerMethod handlerMethod,
+    MethodParameter parameter
+  ) {
 
     // 如果不支持 parameter, return null
     if ( !this.supportsParameter(parameter) )

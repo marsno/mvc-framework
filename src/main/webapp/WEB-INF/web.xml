@@ -10,8 +10,8 @@
     <servlet-name>DispatcherServlet</servlet-name>
     <servlet-class>pers.mars.mvc.servlet.DispatcherServlet</servlet-class>
     <init-param>
-      <param-name>defaultConfigurationClass</param-name>
-      <param-value>test.DefaultConfiguration</param-value>
+      <param-name>configurationClassName</param-name>
+      <param-value>test.configuration.TestConfiguration</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

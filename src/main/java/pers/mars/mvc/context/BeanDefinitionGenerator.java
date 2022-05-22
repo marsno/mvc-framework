@@ -1,7 +1,6 @@
 package pers.mars.mvc.context;
 
 import pers.mars.mvc.context.annotation.*;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +35,7 @@ public class BeanDefinitionGenerator {
       beanDefinition.setType(classObject);
       if (!classObject.isAnnotationPresent(Scope.class)) {
         beanDefinition.setScope(BeanScope.SINGLETON);
-      }
-      else {
+      } else {
         beanDefinition.setScope(classObject.getAnnotation(Scope.class).value());
       }
       for (Field field : classObject.getDeclaredFields()) {

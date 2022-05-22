@@ -27,10 +27,12 @@ public class RequestParamMethodArgumentResolver
    * 从 {argument request} 中获取 argument
    */
   @Override
-  public Object resolveArgument(HttpServletRequest request,
-                                HttpServletResponse response,
-                                HandlerMethod handlerMethod,
-                                MethodParameter parameter) {
+  public Object resolveArgument(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    HandlerMethod handlerMethod,
+    MethodParameter parameter
+  ) {
 
     // 如果不支持 parameter, return null
     if ( !this.supportsParameter(parameter) )
@@ -99,7 +101,6 @@ public class RequestParamMethodArgumentResolver
     }
 
     return pointNumber <= 1;
-
   }
 
 }
